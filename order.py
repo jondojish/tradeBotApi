@@ -12,7 +12,7 @@ from checker import check
 
 API_TOKEN = os.environ.get("API_TOKEN") or os.getenv("API_TOKEN")
 ACCOUNT_ID = os.environ.get("ACCOUNT_ID") or os.getenv("ACCOUNT_ID")
-ACCOUNT_ID = os.environ.get("AWS_BUCKET_NAME") or os.getenv("AWS_BUCKET_NAME")
+AWS_BUCKET_NAME = os.environ.get("AWS_BUCKET_NAME") or os.getenv("AWS_BUCKET_NAME")
 
 client = oandapyV20.API(access_token=API_TOKEN)
 
@@ -127,12 +127,12 @@ def create_orders(market):
 
     with open("id_file.txt", "wb") as f:
         s3.download_fileobj(
-            "orderids", "id_log.txt", f
+            AWS_BUCKET_NAME, "id_log.txt", f
         )  # download id_log.txt from s3 to new id_log.txt file
     with open("id_file.txt", "a") as f:
         f.write(f"\n{id_1},{id_2}")
     s3.upload_file(
-        "id_file.txt", "orderids", "id_log.txt"
+        "id_file.txt", AWS_BUCKET_NAME, "id_log.txt"
     )  # upload id_file.txt to s3 s id_log.txt which overwrites
 
 

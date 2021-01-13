@@ -7,13 +7,14 @@ from dotenv import load_dotenv
 
 API_TOKEN = os.environ.get("API_TOKEN") or os.getenv("API_TOKEN")
 ACCOUNT_ID = os.environ.get("ACCOUNT_ID") or os.getenv("ACCOUNT_ID")
+AWS_BUCKET_NAME = os.environ.get("AWS_BUCKET_NAME") or os.getenv("AWS_BUCKET_NAME")
 
 
 def check():
     s3 = boto3.client("s3")
     with open("id_file.txt", "wb") as f:
         s3.download_fileobj(
-            "orderids", "id_log.txt", f
+            AWS_BUCKET_NAME, "id_log.txt", f
         )  # download id_log.txt from s3 to new id_log.txt file
     with requests.Session() as s:
         headers = {
@@ -48,7 +49,7 @@ def check():
         with open("id_file.txt", "w") as f:
             f.write(new_text)
         s3.upload_file(
-            "id_file.txt", "orderids", "id_log.txt"
+            "id_file.txt", AWS_BUCKET_NAME, "id_log.txt"
         )  # upload id_file.txt to s3 s id_log.txt which overwrites
 
 
