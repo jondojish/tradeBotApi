@@ -2,6 +2,7 @@ import requests
 import json
 import os
 import boto3
+from time import sleep
 from dotenv import load_dotenv
 
 
@@ -53,4 +54,6 @@ def check():
         )  # upload id_file.txt to s3 s id_log.txt which overwrites
 
 
-check()
+while True:
+    check()
+    sleep(60)
