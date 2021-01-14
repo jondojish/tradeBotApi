@@ -60,7 +60,7 @@
         ```heroku logs --tail```
     * You can stop the script by scaling down the amount of workers like this
 
-    ```heroku ps:scale worker=0```
+        ```heroku ps:scale worker=0```
 
 
 
