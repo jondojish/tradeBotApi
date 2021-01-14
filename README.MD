@@ -3,7 +3,7 @@
 ## Configure S3
 * Create an S3 bucket with AWS and put it in your .env
 * BUCKET_NAME={S3 bucket name}
-* Run the'aws configure' command and enter Aws Access Key ID, AWS Secret Acces Key and region name
+* If not deploying on heroku, run the'aws configure' command and enter Aws Access Key ID, AWS Secret Acces Key and region
 * Set CORS for Bucket as:
 
     ```
@@ -24,7 +24,7 @@
         }
     ]
     ```
-* Upload a file named 'id_log.txt' to Bucket
+* Upload an empty file named 'id_log.txt' to Bucket
 
 ## Configure Api
 * Put in .env
@@ -40,7 +40,7 @@
     ```
 
 # Heroku
-* Look to configure S3 first
+* Look at 'configure S3' first as you will need to create an S3 bucket
 * ## config vars
     ```
     API_TOKEN={oanda api key/token}
