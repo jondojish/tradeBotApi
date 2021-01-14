@@ -2,9 +2,11 @@
 
 ## Configure S3
 * Create an S3 bucket with AWS and put it in your .env
-* BUCKET_NAME={bucket name}
+* BUCKET_NAME={S3 bucket name}
 * Run the'aws configure' command and enter Aws Access Key ID, AWS Secret Acces Key and region name
-* Set CORS for Bucket as -->
+* Set CORS for Bucket as:
+
+    ```
     [
         {
             "AllowedHeaders": [
@@ -21,16 +23,44 @@
             "ExposeHeaders": []
         }
     ]
+    ```
 * Upload a file named 'id_log.txt' to Bucket
 
 ## Configure Api
-* put in .env or put in config vars (for heroku)
+* Put in .env
 * API_TOKEN=oanda api key/token
 * ACCOUNT_ID=id of account to run program on
 
-# Run
+## Run
 * Pass market(s) to the order.py file via command line
-* e.g for windows: python order.py USD_JPY EUR_USD
+* E.g for windows
+
+    ```
+    python order.py USD_JPY EUR_USD
+    ```
+
+# Heroku
+* Look to configure S3 first
+* ## config vars
+    ```
+    API_TOKEN={oanda api key/token}
+    ACCOUNT_ID={id of account to run program on}
+    BUCKET_NAME={S3 bucket name}
+    AWS_ACCESS_KEY_ID={your aws access key id}
+    AWS_SECRET_ACCESS_KEY={your aws secret access key id}
+    ```
+* ## running the script
+    * First deploy the script to heroku
+    * Run the script like this
+
+        ```heroku ps:scale worker=1```
+    * This runs the main.py as specified in Procfile, the "1" specifies the amount of workers that will run
+    * You can check logs like this
+
+        ```heroku logs --tail```
+    * You can stop the script by scaling down the amount of workers like this
+
+    ```heroku ps:scale worker=0```
 
 
 
