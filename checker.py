@@ -5,13 +5,13 @@ import boto3
 from time import sleep
 from dotenv import load_dotenv
 
-
+load_dotenv()
 API_TOKEN = os.environ.get("API_TOKEN") or os.getenv("API_TOKEN")
 ACCOUNT_ID = os.environ.get("ACCOUNT_ID") or os.getenv("ACCOUNT_ID")
 AWS_BUCKET_NAME = os.environ.get("AWS_BUCKET_NAME") or os.getenv("AWS_BUCKET_NAME")
 
 
-def check():
+def check_orders():
     s3 = boto3.client("s3")
     with open("id_file.txt", "wb") as f:
         s3.download_fileobj(
@@ -26,7 +26,6 @@ def check():
         curr_ids = []
         with open("id_file.txt") as f:
             lines = [line.strip() for line in f.readlines()]
-            print(lines)
             for line in lines:
                 if len(line) > 0:
                     order_id1, order_id2 = line.split(",")
@@ -52,8 +51,8 @@ def check():
         s3.upload_file(
             "id_file.txt", AWS_BUCKET_NAME, "id_log.txt"
         )  # upload id_file.txt to s3 s id_log.txt which overwrites
+        print("succesfully checked orders")
 
 
-while True:
-    check()
-    sleep(60)
+if __name__ == "__main__":
+    check_orders()

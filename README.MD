@@ -24,7 +24,7 @@
 * Upload a file named 'id_log.txt' to Bucket
 
 ## Configure Api
-* Create a .env file (is more secure than including in code)
+* put in .env or put in config vars (for heroku)
 * API_TOKEN=oanda api key/token
 * ACCOUNT_ID=id of account to run program on
 

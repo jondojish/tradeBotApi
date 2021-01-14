@@ -8,7 +8,7 @@ import boto3
 from dotenv import load_dotenv
 from time import sleep
 from Trade import Trade
-from checker import check
+from checker import check_orders
 
 API_TOKEN = os.environ.get("API_TOKEN") or os.getenv("API_TOKEN")
 ACCOUNT_ID = os.environ.get("ACCOUNT_ID") or os.getenv("ACCOUNT_ID")
@@ -17,7 +17,7 @@ AWS_BUCKET_NAME = os.environ.get("AWS_BUCKET_NAME") or os.getenv("AWS_BUCKET_NAM
 client = oandapyV20.API(access_token=API_TOKEN)
 
 
-def create_orders(market):
+def create_order(market):
     s3 = boto3.client("s3")
     spreads = {}
     r = requests.get("https://www.live-rates.com/rates")
@@ -69,7 +69,7 @@ def create_orders(market):
         URL = f"https://api-fxpractice.oanda.com/v3/instruments/{market}/candles"
         r = s.get(URL, params=params)
         print(r)
-        print(r.json())
+        # print(r.json())
         openP = float(r.json()["candles"][0]["mid"]["c"])
 
         URL = f"https://api-fxpractice.oanda.com/v3/instruments/GBP_USD/candles"
@@ -81,7 +81,7 @@ def create_orders(market):
         URL = f"https://api-fxpractice.oanda.com/v3/instruments/GBP_JPY/candles"
         r = s.get(URL, params=params)
         print(r)
-        print(r.json())
+        # print(r.json())
         JPY_rate = round(float(r.json()["candles"][0]["mid"]["c"]) / 100, 5)
 
         rates = {"USD": USD_rate, "JPY": JPY_rate}
@@ -100,12 +100,12 @@ def create_orders(market):
     order["type"] = "MARKET_IF_TOUCHED"
     order["positionFill"] = "DEFAULT"
 
-    print(buy_data)
+    # print(buy_data)
 
     r = orders.OrderCreate(ACCOUNT_ID, data=buy_data)
     client.request(r)
-    print(r.response)
-    print()
+    # print(r.response)
+    # print()
     id_1 = r.response["orderCreateTransaction"]["id"]
 
     sell_data = {"order": {}}
@@ -122,7 +122,7 @@ def create_orders(market):
 
     r = orders.OrderCreate(ACCOUNT_ID, data=sell_data)
     client.request(r)
-    print(r.response)
+    # print(r.response)
     id_2 = r.response["orderCreateTransaction"]["id"]
 
     with open("id_file.txt", "wb") as f:
@@ -134,8 +134,10 @@ def create_orders(market):
     s3.upload_file(
         "id_file.txt", AWS_BUCKET_NAME, "id_log.txt"
     )  # upload id_file.txt to s3 s id_log.txt which overwrites
+    print(f"successfully ordered {market}")
 
 
-markets = sys.argv[1:]
-for market in markets:
-    create_orders(market)
+if __name__ == "__main__":
+    markets = sys.argv[1:]
+    for market in markets:
+        create_order(market)
