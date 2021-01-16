@@ -25,11 +25,9 @@ is_tradable = {
     "US30_USD": True,
     "XAU_USD": True,
 }
-while True:
-    sleep(5)
-    tz_London = pytz.timezone("Europe/London")
-    datetime_London = datetime.now(tz_London)
-    curr_time = datetime_London.strftime("%H:%M")
+
+
+def create_correct_order(curr_time):
 
     if curr_time != "00:00":
         is_tradable["XAU_USD"] = True
@@ -59,4 +57,15 @@ while True:
         create_order("US30_USD")
         is_tradable["US30_USD"] = False
 
+
+while True:
+    London_time = datetime.now(pytz.timezone("Europe/London"))
+    curr_time = London_time.strftime("%H:%M")
+    day = London_time.today().weekday()
+    hour = London_time.strftime("%H")
+    if (
+        (day == 4 and hour < 22) or (day == 6 and hour >= 22) or (day < 4 and day >= 0)
+    ):  # checks if market is open
+        create_correct_order(curr_time)
     check_orders()
+    sleep(3)

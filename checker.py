@@ -51,7 +51,7 @@ def check_orders():
         s3.upload_file(
             "id_file.txt", AWS_BUCKET_NAME, "id_log.txt"
         )  # upload id_file.txt to s3 s id_log.txt which overwrites
-        print("succesfully checked orders")
+    print("succesfully checked orders")
 
 
 if __name__ == "__main__":

@@ -22,7 +22,7 @@ def create_order(market):
     spreads = {}
     r = requests.get("https://www.live-rates.com/rates")
     rates_data = r.json()
-    print(rates_data)
+    # print(rates_data)
     for curr in rates_data:
         if curr["currency"] == "EUR/USD":
             ask = float(curr["ask"])
@@ -48,8 +48,8 @@ def create_order(market):
             ask = float(curr["ask"])
             bid = float(curr["bid"])
             spreads["US30_USD"] = round(ask - bid, 5)
-    print()
-    print(spreads)
+    # print()
+    # print(spreads)
     spread = spreads[market]
 
     with requests.Session() as s:
@@ -61,27 +61,27 @@ def create_order(market):
 
         URL = f"https://api-fxpractice.oanda.com/v3/accounts/{ACCOUNT_ID}"
         r = s.get(URL)
-        print(r)
+        # print(r)
         capital = float(r.json()["account"]["marginAvailable"])
 
         params = {"count": 1}
 
         URL = f"https://api-fxpractice.oanda.com/v3/instruments/{market}/candles"
         r = s.get(URL, params=params)
-        print(r)
+        # print(r)
         # print(r.json())
         openP = float(r.json()["candles"][0]["mid"]["c"])
 
         URL = f"https://api-fxpractice.oanda.com/v3/instruments/GBP_USD/candles"
         r = s.get(URL, params=params)
-        print(r)
-        print(r.json())
+        # print(r)
+        # print(r.json())
         USD_rate = float(r.json()["candles"][0]["mid"]["c"])
 
         URL = f"https://api-fxpractice.oanda.com/v3/instruments/GBP_JPY/candles"
         r = s.get(URL, params=params)
         print(r)
-        # print(r.json())
+        print(r.json())
         JPY_rate = round(float(r.json()["candles"][0]["mid"]["c"]) / 100, 5)
 
         rates = {"USD": USD_rate, "JPY": JPY_rate}
@@ -100,12 +100,11 @@ def create_order(market):
     order["type"] = "MARKET_IF_TOUCHED"
     order["positionFill"] = "DEFAULT"
 
-    # print(buy_data)
+    print(buy_data)
 
     r = orders.OrderCreate(ACCOUNT_ID, data=buy_data)
     client.request(r)
     # print(r.response)
-    # print()
     id_1 = r.response["orderCreateTransaction"]["id"]
 
     sell_data = {"order": {}}
