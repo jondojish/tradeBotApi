@@ -69,5 +69,5 @@ while True:
         create_correct_order(curr_time)
         check_orders()
     else:
-        print("Markets closed, Nothig to check")
+        print("Markets closed, Nothing to check")
     sleep(3)
