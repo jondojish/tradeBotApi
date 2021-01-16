@@ -67,5 +67,7 @@ while True:
         (day == 4 and hour < 22) or (day == 6 and hour >= 22) or (day < 4 and day >= 0)
     ):  # checks if market is open
         create_correct_order(curr_time)
-    check_orders()
+        check_orders()
+    else:
+        print("Markets closed, Nothig to check")
     sleep(3)
