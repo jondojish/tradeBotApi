@@ -62,7 +62,7 @@ while True:
     London_time = datetime.now(pytz.timezone("Europe/London"))
     curr_time = London_time.strftime("%H:%M")
     day = London_time.today().weekday()
-    hour = London_time.strftime("%H")
+    hour = int(London_time.strftime("%H"))
     if (
         (day == 4 and hour < 22) or (day == 6 and hour >= 22) or (day < 4 and day >= 0)
     ):  # checks if market is open
