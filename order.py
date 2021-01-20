@@ -10,27 +10,18 @@ from time import sleep
 from Trade import Trade
 from checker import check_orders
 
-API_TOKEN = os.environ.get("API_TOKEN") or os.getenv("API_TOKEN")
-ACCOUNT_ID = os.environ.get("ACCOUNT_ID") or os.getenv("ACCOUNT_ID")
+API_TOKEN = os.environ.get("API_TOKEN")
+ACCOUNT_ID = os.environ.get("ACCOUNT_ID")
 
-AWS_BUCKET_NAME = os.environ.get("AWS_BUCKET_NAME") or os.getenv("AWS_BUCKET_NAME")
-AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY") or os.getenv(
-    "AWS_SECRET_ACCESS_KEY"
-)
-AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID") or os.getenv(
-    "AWS_ACCESS_KEY_ID"
-)
-
+AWS_BUCKET_NAME = os.environ.get("AWS_BUCKET_NAME")
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
 
 client = oandapyV20.API(access_token=API_TOKEN)
 
 
 def create_order(market):
-    s3 = boto3.client(
-        "s3",
-        aws_access_key_id=AWS_ACCESS_KEY_ID,
-        aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-    )
+
     spreads = {}
     r = requests.get("https://www.live-rates.com/rates")
     rates_data = r.json()
@@ -136,6 +127,11 @@ def create_order(market):
     # print(r.response)
     id_2 = r.response["orderCreateTransaction"]["id"]
 
+    s3 = boto3.client(
+        "s3",
+        aws_access_key_id=AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+    )
     with open("id_file.txt", "wb") as f:
         s3.download_fileobj(
             AWS_BUCKET_NAME, "id_log.txt", f
