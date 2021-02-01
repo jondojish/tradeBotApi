@@ -21,11 +21,9 @@ client = oandapyV20.API(access_token=API_TOKEN)
 
 
 def create_order(market):
-
     spreads = {}
     r = requests.get("https://www.live-rates.com/rates")
     rates_data = r.json()
-    # print(rates_data)
     for curr in rates_data:
         if curr["currency"] == "EUR/USD":
             ask = float(curr["ask"])
@@ -51,8 +49,6 @@ def create_order(market):
             ask = float(curr["ask"])
             bid = float(curr["bid"])
             spreads["US30_USD"] = round(ask - bid, 5)
-    # print()
-    # print(spreads)
     spread = spreads[market]
 
     with requests.Session() as s:
@@ -64,21 +60,16 @@ def create_order(market):
 
         URL = f"https://api-fxpractice.oanda.com/v3/accounts/{ACCOUNT_ID}"
         r = s.get(URL)
-        # print(r)
         capital = float(r.json()["account"]["marginAvailable"])
 
         params = {"count": 1}
 
         URL = f"https://api-fxpractice.oanda.com/v3/instruments/{market}/candles"
         r = s.get(URL, params=params)
-        # print(r)
-        # print(r.json())
         openP = float(r.json()["candles"][0]["mid"]["c"])
 
         URL = f"https://api-fxpractice.oanda.com/v3/instruments/GBP_USD/candles"
         r = s.get(URL, params=params)
-        # print(r)
-        # print(r.json())
         USD_rate = float(r.json()["candles"][0]["mid"]["c"])
 
         URL = f"https://api-fxpractice.oanda.com/v3/instruments/GBP_JPY/candles"
@@ -103,11 +94,8 @@ def create_order(market):
     order["type"] = "MARKET_IF_TOUCHED"
     order["positionFill"] = "DEFAULT"
 
-    print(buy_data)
-
     r = orders.OrderCreate(ACCOUNT_ID, data=buy_data)
     client.request(r)
-    # print(r.response)
     id_1 = r.response["orderCreateTransaction"]["id"]
 
     sell_data = {"order": {}}
@@ -124,23 +112,22 @@ def create_order(market):
 
     r = orders.OrderCreate(ACCOUNT_ID, data=sell_data)
     client.request(r)
-    # print(r.response)
     id_2 = r.response["orderCreateTransaction"]["id"]
 
-    s3 = boto3.client(
-        "s3",
-        aws_access_key_id=AWS_ACCESS_KEY_ID,
-        aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-    )
-    with open("id_file.txt", "wb") as f:
-        s3.download_fileobj(
-            AWS_BUCKET_NAME, "id_log.txt", f
-        )  # download id_log.txt from s3 to new id_log.txt file
+    # s3 = boto3.client(
+    #     "s3",
+    #     aws_access_key_id=AWS_ACCESS_KEY_ID,
+    #     aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+    # )
+    # with open("id_file.txt", "wb") as f:
+    #     s3.download_fileobj(
+    #         AWS_BUCKET_NAME, "id_log.txt", f
+    #     )  # download id_log.txt from s3 to new id_log.txt file
     with open("id_file.txt", "a") as f:
         f.write(f"\n{id_1},{id_2}")
-    s3.upload_file(
-        "id_file.txt", AWS_BUCKET_NAME, "id_log.txt"
-    )  # upload id_file.txt to s3 s id_log.txt which overwrites
+    # s3.upload_file(
+    #     "id_file.txt", AWS_BUCKET_NAME, "id_log.txt"
+    # )  # upload id_file.txt to s3 s id_log.txt which overwrites
     print(f"successfully ordered {market}")
 
 
