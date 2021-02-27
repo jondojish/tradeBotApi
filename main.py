@@ -62,7 +62,16 @@ def create_correct_order(curr_time):
         is_tradable["US30_USD"] = False
 
 
+# While loop runs every interval seconds
+interval = 3
+# Check orders every check interval seconds
+check_interval = 600
+# Aids check interval
+time_count = 0
+
+# chech time every inverval secs but checks orders every check interval seconds
 while True:
+    time_count += interval
     London_time = datetime.now(pytz.timezone("Europe/London"))
     curr_time = London_time.strftime("%H:%M")
     day = London_time.today().weekday()
@@ -71,7 +80,9 @@ while True:
         (day == 4 and hour < 22) or (day == 6 and hour >= 22) or (day < 4 and day >= 0)
     ):  # checks if market is open
         create_correct_order(curr_time)
-        check_orders()
+        if time_count % check_interval == 0:
+            check_orders()
+            print("Orders Checked")
     else:
         print("Markets closed, Nothing to check")
-    sleep(3)
+    sleep(interval)

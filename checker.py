@@ -16,15 +16,16 @@ AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
 
 
 def check_orders():
-    # s3 = boto3.client(
-    #     "s3",
-    #     aws_access_key_id=AWS_ACCESS_KEY_ID,
-    #     aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-    # )
-    # with open("id_file.txt", "wb") as f:
-    #     s3.download_fileobj(
-    #         AWS_BUCKET_NAME, "id_log.txt", f
-    #     )  # download id_log.txt from s3 to new id_log.txt file
+    s3 = boto3.client(
+        "s3",
+        aws_access_key_id=AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+    )
+
+    # download id_log.txt from s3 to new id_log.txt file
+    with open("id_file.txt", "wb") as f:
+        s3.download_fileobj(AWS_BUCKET_NAME, "id_log.txt", f)
+
     with requests.Session() as s:
         headers = {
             "Authorization": f"Bearer {API_TOKEN}",
@@ -56,9 +57,9 @@ def check_orders():
         new_text = "\n".join(new_text)
         with open("id_file.txt", "w") as f:
             f.write(new_text)
-        # s3.upload_file(
-        #     "id_file.txt", AWS_BUCKET_NAME, "id_log.txt"
-        # )  # upload id_file.txt to s3 s id_log.txt which overwrites
+
+        # upload updated id_file.txt to s3 s id_log.txt
+        s3.upload_file("id_file.txt", AWS_BUCKET_NAME, "id_log.txt")
     print("succesfully checked orders")
 
 
