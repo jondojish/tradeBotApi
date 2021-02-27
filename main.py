@@ -1,5 +1,3 @@
-import oandapyV20
-import oandapyV20.endpoints.orders as orders
 import requests
 import json
 import sys
