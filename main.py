@@ -84,5 +84,7 @@ while True:
             check_orders()
             print("Orders Checked")
     else:
+        # reset time count for when market opens
+        time_count = 0
         print("Markets closed, Nothing to check")
     sleep(interval)
