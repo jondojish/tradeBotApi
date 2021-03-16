@@ -63,7 +63,7 @@ def create_correct_order(curr_time):
 # While loop runs every interval seconds
 interval = 3
 # Check orders every check interval seconds
-check_interval = 600
+check_interval = int(os.environ.get("CHECK_INTERVAL"))
 # Aids check interval
 time_count = 0
 
