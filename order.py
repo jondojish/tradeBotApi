@@ -43,7 +43,8 @@ def create_order(market):
         # Gets availabe margin
         URL = f"https://api-fxpractice.oanda.com/v3/accounts/{ACCOUNT_ID}"
         r = s.get(URL)
-        capital = float(r.json()["account"]["marginAvailable"])
+        capital = float(r.json()["account"]["balance"])
+        print(f"Look {r.json()}")
 
         # only lates candle
         params = {"count": 1}
