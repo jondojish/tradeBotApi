@@ -3,7 +3,7 @@ class Trade:
     conversion = {
         "USD_JPY": [0.001],
         "EUR_USD": [0.001],
-        "XAU_USD": [0.0025],
+        # "XAU_USD": [0.0025],
         "EUR_JPY": [0.0016],
         "GBP_USD": [0.001],
         "US30_USD": [0.001],
@@ -16,7 +16,7 @@ class Trade:
         capital,
         spread,
         rates,
-        commission=0,
+        risk,
     ):
         for name in self.conversion:
             if "JPY" in name:
@@ -29,36 +29,39 @@ class Trade:
             self.openP = openP * 100
         elif self.market == "US30_USD":
             self.openP = openP
-        if self.market == "XAU_USD":
+        elif self.market == "XAU_USD":
             self.openP = openP * 10
         else:
             self.openP = openP * 10000
-        self.commision = commission
         self.capital = capital
         self.multiplier = self.conversion[self.market][0]
         self.uk = Trade.conversion[market][1]
-        self.risk = 0.024 / len(Trade.conversion)
+        self.risk = float(risk) / len(Trade.conversion)  # risk %
         self.spread = spread
 
     def units(self):
-        change = self.buyP()[1] - self.buy_sl()[1]
-        lots = ((self.capital * self.risk) / (change + self.commision)) * self.uk
+        lots = (
+            (self.capital * self.risk)
+            / (self.openP * self.multiplier + self.spread)
+            * self.uk
+        )
+        print(lots)
         if self.market == "XAU_USD":
             return round(lots * 10, 0)
         elif self.market == "US30_USD":
-            return round(lots * 10000, 0)
+            return round(lots, 0)
         elif self.market == "USD_JPY" or self.market == "EUR_JPY":
-            return round(lots * 1000000, 0)
+            return round(lots * 10000, 0)
         return round(lots * 10000, 0)
 
     def buyP(self):
         if self.market == "USD_JPY" or self.market == "EUR_JPY":
             return (
-                round((self.openP * (1 + self.multiplier)) / 10000, 3),
+                round((self.openP * (1 + self.multiplier)) / 100, 3),
                 self.openP * (1 + self.multiplier),
             )
         elif self.market == "US30_USD":
-            return round(self.openP * (1 + self.multiplier) / 10000, 0), self.openP * (
+            return round(self.openP * (1 + self.multiplier), 0), self.openP * (
                 1 + self.multiplier
             )
         elif self.market == "XAU_USD":
@@ -73,13 +76,12 @@ class Trade:
         if self.market == "USD_JPY" or self.market == "EUR_JPY":
             return round(
                 (self.openP + 6.25 * ((self.openP * self.multiplier) + self.spread))
-                / 10000,
+                / 100,
                 3,
             )
         elif self.market == "US30_USD":
             return round(
-                (self.openP + 6.25 * ((self.openP * self.multiplier) + self.spread))
-                / 10000,
+                (self.openP + 6.25 * ((self.openP * self.multiplier) + self.spread)),
                 1,
             )
         elif self.market == "XAU_USD":
@@ -96,13 +98,14 @@ class Trade:
 
     def buy_sl(self):
         if self.market == "USD_JPY" or self.market == "EUR_JPY":
+            print(self.openP, self.spread)
             return (
-                round((self.openP - self.spread) / 10000, 3),
+                round((self.openP - self.spread) / 100, 3),
                 self.openP - self.spread,
             )
         elif self.market == "US30_USD":
             return (
-                round((self.openP - self.spread) / 10000, 1),
+                round((self.openP - self.spread), 1),
                 self.openP - self.spread,
             )
         elif self.market == "XAU_USD":
@@ -111,13 +114,9 @@ class Trade:
 
     def sellP(self):
         if self.market == "USD_JPY" or self.market == "EUR_JPY":
-            return round(
-                ((self.openP * (1 - self.multiplier)) - self.spread) / 10000, 3
-            )
+            return round(((self.openP * (1 - self.multiplier)) - self.spread) / 100, 3)
         elif self.market == "US30_USD":
-            return round(
-                ((self.openP * (1 - self.multiplier)) - self.spread) / 10000, 1
-            )
+            return round(((self.openP * (1 - self.multiplier)) - self.spread), 1)
         elif self.market == "XAU_USD":
             return round(((self.openP * (1 - self.multiplier)) - self.spread) / 10, 1)
         return round(((self.openP * (1 - self.multiplier)) - self.spread) / 10000, 5)
@@ -126,7 +125,7 @@ class Trade:
         if self.market == "USD_JPY" or self.market == "EUR_JPY":
             return round(
                 (self.openP - 6.25 * ((self.openP * self.multiplier) + self.spread))
-                / 10000,
+                / 100,
                 3,
             )
         elif self.market == "US30_USD":
@@ -149,7 +148,7 @@ class Trade:
 
     def sell_sl(self):
         if self.market == "USD_JPY" or self.market == "EUR_JPY":
-            return round(self.openP / 10000, 3)
+            return round(self.openP / 100, 3)
         elif self.market == "US30_USD":
             return round(self.openP / 10000, 1)
         elif self.market == "XAU_USD":

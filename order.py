@@ -8,12 +8,17 @@ from time import sleep
 from Trade import Trade
 from checker import check_orders
 
+load_dotenv()
+
+
 API_TOKEN = os.environ.get("API_TOKEN")
 ACCOUNT_ID = os.environ.get("ACCOUNT_ID")
 
 AWS_BUCKET_NAME = os.environ.get("AWS_BUCKET_NAME")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+
+RISK = os.environ.get("RISK")
 
 
 def create_order(market):
@@ -31,6 +36,7 @@ def create_order(market):
         params = {"instruments": market}
         URL = f"https://api-fxpractice.oanda.com/v3/accounts/{ACCOUNT_ID}/pricing"
         r = s.get(URL, params=params)
+
         ask = float(r.json()["prices"][0]["asks"][0]["price"]) * multipliers.get(
             market, 10000
         )
@@ -40,13 +46,12 @@ def create_order(market):
         spread = float(ask) - float(bid)
         spread = round(spread, 1)
 
-        # Gets availabe margin
+        # Gets Capital
         URL = f"https://api-fxpractice.oanda.com/v3/accounts/{ACCOUNT_ID}"
         r = s.get(URL)
         capital = float(r.json()["account"]["balance"])
-        print(f"Look {r.json()}")
 
-        # only lates candle
+        # only latest candle
         params = {"count": 1}
 
         # Gets Rate for market requested
@@ -65,11 +70,10 @@ def create_order(market):
 
         rates = {"USD": USD_rate, "JPY": JPY_rate}
 
-        trade_info = Trade(market, openP, capital, spread, rates)
+        trade_info = Trade(market, openP, capital, spread, rates, RISK)
 
         # New url for creating orders
         URL = f"https://api-fxpractice.oanda.com/v3/accounts/{ACCOUNT_ID}/orders"
-
         buy_data = {"order": {}}
         order = buy_data["order"]
         order["price"] = str(trade_info.buyP()[0])

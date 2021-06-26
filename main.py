@@ -10,7 +10,7 @@ from datetime import datetime
 from order import create_order
 from checker import check_orders
 
-load_dotenv()
+# load_dotenv()
 
 API_TOKEN = os.environ.get("API_TOKEN")
 ACCOUNT_ID = os.environ.get("ACCOUNT_ID")
@@ -42,9 +42,9 @@ def create_correct_order(curr_time):
     if curr_time != "14:30":
         is_tradable["US30_USD"] = True
 
-    if curr_time == "00:00" and is_tradable["XAU_USD"]:
-        create_order("XAU_USD")
-        is_tradable["XAU_USD"] = False
+    # if curr_time == "00:00" and is_tradable["XAU_USD"]: # without Gold
+    #     create_order("XAU_USD")
+    #     is_tradable["XAU_USD"] = False
     if curr_time == "06:00" and is_tradable["GBP_USD"]:
         create_order("GBP_USD")
         create_order("EUR_USD")
